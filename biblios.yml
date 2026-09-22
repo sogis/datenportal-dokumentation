@@ -39,11 +39,36 @@ content:
       master_file: master.adoc
       sidebar_toc_numbers: on
 
+    - id: architektur
+      display_name: Architektur und Zusammenspiel
+      card_label: Betrieb, Themenintegration, Entwicklung
+      url: https://github.com/sogis/datenportal-dokumentation-architektur.git
+      branches:
+        - name: main
+          display_version: Aktuell
+      start_path: docs/biblios
+      default_version: main
+      render_mode: single_page
+      master_file: master.adoc
+      sidebar_toc_numbers: on
+
     - id: datenintegration
       display_name: Datenintegration
       card_label: Datenlieferant
       url: https://codeberg.org/edigonzales/datenportal-dokumentation-datenintegration.git
-      #url: file:///Users/stefan/sources/datenportal-dokumentation-datenintegration
+      branches:
+        - name: main
+          display_version: Aktuell
+      start_path: docs/biblios
+      default_version: main
+      render_mode: single_page
+      master_file: master.adoc
+      sidebar_toc_numbers: on
+
+    - id: betrieb
+      display_name: Betrieb
+      card_label: Administration
+      url: https://codeberg.org/edigonzales/datenportal-dokumentation-betrieb.git
       branches:
         - name: main
           display_version: Aktuell

@@ -73,3 +73,7 @@ $RECYCLE.BIN/
 build/
 .thoth/
 
+# Lokale Dokumentationsvorschau
+biblios.local.yml
+.venv/
+__pycache__/
