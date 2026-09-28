@@ -86,3 +86,87 @@ lokale Branches, fehlende Quellen, Detached HEAD und den Erhalt der Biblios-Wert
 ```bash
 .venv/bin/python -m unittest discover -s tests -v
 ```
+
+## Statisches Containerimage
+
+Das Image `ghcr.io/sogis/datenportal-dokumentation` liefert die bereits gebauten
+HTML-Seiten mit `nginxinc/nginx-unprivileged:1.30.4-alpine-slim` aus. Der Prozess
+läuft ohne Root auf Port 8080. Java und Thoth gehören nicht ins Runtime-Image;
+die Inhalte sind ein fester Buildstand und werden nicht zur Laufzeit neu erzeugt.
+
+Zuerst die HTML-Seiten mit dem oben beschriebenen Thoth-Build erzeugen, dann:
+
+```bash
+docker build -t datenportal-dokumentation:local .
+python3 scripts/test-container.py --image datenportal-dokumentation:local
+docker run --rm -p 127.0.0.1:8093:8080 datenportal-dokumentation:local
+```
+
+Der Container ist damit unter <http://localhost:8093/> erreichbar. Der Build
+verlangt `build/site/index.html` und `build/site/search-index.json`. Die
+`.dockerignore` lässt ausschliesslich Runtime-Konfiguration und `build/site/`
+in den Buildkontext; Quellrepos, Secrets und die Thoth-Caches werden nicht
+verpackt. Der Image-Healthcheck prüft die ausgelieferte Startseite.
+
+Für einen lokalen Arbeitsstand können die durch `serve --use-local-working-tree`
+erzeugten Dateien verwendet werden. Den Vorschauprozess vor dem Image-Build
+anhalten, damit sich die Dateien während des Kopierens nicht ändern. CI verwendet
+immer die Remote-Quellen aus `biblios.yml`, keine lokalen Änderungen.
+
+### Hinter APISIX unter `/dokumentation/`
+
+Das Image ist prefix-neutral: Seiten, Assets und Suche verwenden die relativen
+Biblios-Links. APISIX muss `/dokumentation` mit HTTP 308 auf `/dokumentation/`
+umleiten, bei `/dokumentation/*` den Prefix entfernen und
+`X-Forwarded-Prefix: /dokumentation` setzen. Queryparameter bleiben erhalten.
+NGINX verwendet diesen Header für Weiterleitungen auf Verzeichnisadressen mit
+abschliessendem Slash. Ein ungültiger Header wird ignoriert. Das Image benötigt
+keine HTML-Ersetzungen und keinen SPA-Fallback; unbekannte Dateien liefern 404.
+Alle Antworten verwenden `Cache-Control: no-cache`, damit Browser Dateien bei
+Neuveröffentlichung revalidieren. TLS endet am vorgelagerten Gateway/Router.
+
+Der Containertest startet ausschliesslich eigene temporäre Container und ein
+eigenes Netzwerk. Er prüft Startseite, Kapitel, Assets/SVGs, Suchindex,
+Slash-Weiterleitungen und 404 sowohl direkt als auch unter `/dokumentation/`.
+Danach räumt er seine Ressourcen auf. Die dauerhafte Dev-Stack-Einbindung ist
+ein separater Schritt.
+
+### Veröffentlichung mit GitHub Actions
+
+`.github/workflows/biblios-build.yml` baut bei Push auf `main` oder manuellem
+Start die Dokumentation einmal. Nach erfolgreichem Container-HTTP-Test wird
+derselbe HTML-Stand für GitHub Pages und das Containerimage verwendet. Das
+Image wird bei Läufen auf `main` für `linux/amd64` und `linux/arm64` nach GHCR
+veröffentlicht. Das Publishing benötigt nur den eingebauten `GITHUB_TOKEN`
+mit `packages: write` im Veröffentlichungsjob, keine Docker-Hub-Secrets.
+
+Tags:
+
+- `latest`: letzter erfolgreich veröffentlichter Build auf `main`.
+- `sha-<commit>`: Kurz-SHA des Aggregator-Commits.
+- `0.1.<run_number>`: laufbezogener Versionstag analog zum Datenblatt-Editor.
+
+Die Quellrepos und der Thoth-Snapshot können sich bei einem erneuten Lauf
+ändern, auch wenn der Aggregator-Commit gleich bleibt. Für einen exakt fixierten
+Stand deshalb den im Workflow-Ergebnis ausgegebenen **Image-Digest** verwenden;
+ein SHA-Tag allein fixiert nicht alle Dokumentationsquellen. Der Workflow
+protokolliert zusätzlich die aufgelöste Thoth-Snapshot-Version.
+
+Nach der ersten Veröffentlichung in den GitHub-Paketeinstellungen von
+`sogis/datenportal-dokumentation` die Sichtbarkeit auf **Public** setzen, sofern
+sie noch privat ist. Neue GHCR-Pakete sind standardmässig privat, auch bei einem
+öffentlichen Repository. Dafür sind Verwaltungsrechte am Paket nötig; der
+Workflow verändert diese Einstellung nicht. Siehe
+[GitHub: Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
+Der Workflow versucht einen Pull mit leerer Docker-Konfiguration und meldet im
+Ergebnis, wenn der anonyme Abruf noch nicht funktioniert.
+
+```bash
+docker pull ghcr.io/sogis/datenportal-dokumentation:latest
+docker run --rm -p 127.0.0.1:8093:8080 \
+  ghcr.io/sogis/datenportal-dokumentation:latest
+```
+
+Für Updates ein neues Image ziehen und den Container neu erzeugen. Änderungen
+in einem Quellrepo lösen weiterhin keinen automatischen Aggregator-Build aus:
+Quelländerungen zuerst pushen und danach den Workflow manuell starten.

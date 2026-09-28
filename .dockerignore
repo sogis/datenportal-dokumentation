@@ -1,0 +1,8 @@
+# Only runtime configuration and the prebuilt HTML site belong in the image.
+**
+!Dockerfile
+!nginx/
+!nginx/default.conf
+!build/
+!build/site/
+!build/site/**
