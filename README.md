@@ -108,10 +108,29 @@ verlangt `build/site/index.html` und `build/site/search-index.json`. Die
 in den Buildkontext; Quellrepos, Secrets und die Thoth-Caches werden nicht
 verpackt. Der Image-Healthcheck prüft die ausgelieferte Startseite.
 
-Für einen lokalen Arbeitsstand können die durch `serve --use-local-working-tree`
-erzeugten Dateien verwendet werden. Den Vorschauprozess vor dem Image-Build
-anhalten, damit sich die Dateien während des Kopierens nicht ändern. CI verwendet
-immer die Remote-Quellen aus `biblios.yml`, keine lokalen Änderungen.
+Lokale Working-Trees inklusive uncommitteter Inhalte einmalig bauen:
+
+```bash
+./scripts/build-local.sh
+docker build -t datenportal-dokumentation:local .
+```
+
+Der HTML-Build benötigt Java 25 (`JAVA_HOME`), Git und Python mit PyYAML.
+Ohne `PYTHON` wird `.venv/bin/python`, danach `python3` verwendet.
+Standardmässig baut er das All-JAR in `../thoth` per Gradle (`THOTH_REPO_DIR`
+überschreibt den Checkout). `THOTH_JAR` verwendet stattdessen ein vorhandenes
+All-JAR mit Unterstützung für `build --use-local-working-tree`.
+`--sources-root /pfad/zu/quellen` wählt einen anderen gemeinsamen Quellordner.
+Explizite relative Pfade werden vom Aufrufverzeichnis aus aufgelöst.
+Vorhandene lokale Quellen verwenden ihren aktuellen Branch samt uncommitteter
+Inhalte; fehlende Quellen bleiben mit Hinweis remote, Detached HEAD ist ein Fehler.
+Ein fehlgeschlagener HTML-Build darf nicht durch einen Image-Build fortgesetzt werden.
+
+Eine laufende Vorschau vor dem Build anhalten, damit sie nicht gleichzeitig
+`build/site` verändert. CI verwendet weiterhin Remote-Quellen aus `biblios.yml`.
+Im dev-stack übernimmt `./scripts/up.sh --local-docs` HTML- und Image-Build und
+liefert das Ergebnis über APISIX unter `http://localhost:8081/dokumentation/` aus.
+Ein abweichender `GARAGE_PUBLIC_PORT` wird vom Stack berücksichtigt.
 
 ### Hinter APISIX unter `/dokumentation/`
 
@@ -128,8 +147,7 @@ Neuveröffentlichung revalidieren. TLS endet am vorgelagerten Gateway/Router.
 Der Containertest startet ausschliesslich eigene temporäre Container und ein
 eigenes Netzwerk. Er prüft Startseite, Kapitel, Assets/SVGs, Suchindex,
 Slash-Weiterleitungen und 404 sowohl direkt als auch unter `/dokumentation/`.
-Danach räumt er seine Ressourcen auf. Die dauerhafte Dev-Stack-Einbindung ist
-ein separater Schritt.
+Danach räumt er seine Ressourcen auf. Die dauerhafte Dev-Stack-Einbindung verwendet dieselben Prefix-Regeln.
 
 ### Veröffentlichung mit GitHub Actions
 
