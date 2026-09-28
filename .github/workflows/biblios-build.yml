@@ -134,6 +134,13 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
         with:
@@ -145,7 +152,9 @@ jobs:
         id: meta
         uses: docker/metadata-action@v6
         with:
-          images: ghcr.io/sogis/datenportal-dokumentation
+          images: |
+            ghcr.io/sogis/datenportal-dokumentation
+            sogis/datenportal-dokumentation
           tags: |
             type=sha
             type=raw,value=0.1.${{ github.run_number }}
@@ -171,7 +180,7 @@ jobs:
           {
             echo '### Documentation container'
             echo
-            echo 'Image: ghcr.io/sogis/datenportal-dokumentation'
+            echo 'Images: ghcr.io/sogis/datenportal-dokumentation and docker.io/sogis/datenportal-dokumentation'
             echo "Digest: $IMAGE_DIGEST"
             echo
             echo 'Tags:'
@@ -184,10 +193,12 @@ jobs:
         run: |
           # A fresh Docker config deliberately contains no registry credentials.
           anonymous_config=$(mktemp -d)
-          if docker --config "$anonymous_config" pull "ghcr.io/sogis/datenportal-dokumentation@$IMAGE_DIGEST"; then
-            echo 'Anonymous pull: successful.' >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo '::warning::Anonymous pull failed. Check package visibility and registry availability; see README.'
-            echo 'Anonymous pull: failed. Check package visibility (public) and registry availability.' >> "$GITHUB_STEP_SUMMARY"
-          fi
-          rm -rf "$anonymous_config"
+          trap 'rm -rf "$anonymous_config"' EXIT
+          for image in ghcr.io/sogis/datenportal-dokumentation docker.io/sogis/datenportal-dokumentation; do
+            if docker --config "$anonymous_config" pull "$image@$IMAGE_DIGEST"; then
+              echo "Anonymous pull ($image): successful." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "::warning::Anonymous pull failed for $image. Check public visibility and registry availability; see README."
+              echo "Anonymous pull ($image): failed. Check public visibility and registry availability." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done

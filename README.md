@@ -136,9 +136,26 @@ ein separater Schritt.
 `.github/workflows/biblios-build.yml` baut bei Push auf `main` oder manuellem
 Start die Dokumentation einmal. Nach erfolgreichem Container-HTTP-Test wird
 derselbe HTML-Stand für GitHub Pages und das Containerimage verwendet. Das
-Image wird bei Läufen auf `main` für `linux/amd64` und `linux/arm64` nach GHCR
-veröffentlicht. Das Publishing benötigt nur den eingebauten `GITHUB_TOKEN`
-mit `packages: write` im Veröffentlichungsjob, keine Docker-Hub-Secrets.
+Image wird bei Läufen auf `main` für `linux/amd64` und `linux/arm64` mit denselben
+Tags und demselben Digest in beide Registries veröffentlicht:
+
+- GHCR: `ghcr.io/sogis/datenportal-dokumentation`
+- Docker Hub: `sogis/datenportal-dokumentation`
+
+GHCR verwendet den eingebauten `GITHUB_TOKEN` mit `packages: write` im
+Veröffentlichungsjob. Für Docker Hub sind unter **Settings → Secrets and
+variables → Actions** diese Repository-Secrets erforderlich:
+
+| Secret | Inhalt |
+|---|---|
+| `DOCKERHUB_USERNAME` | Docker-Hub-Benutzer mit Schreibrecht auf `sogis/datenportal-dokumentation` |
+| `DOCKERHUB_TOKEN` | Access-Token dieses Benutzers mit Schreibrecht |
+
+Tokenwerte gehören ausschliesslich in die Secret-Verwaltung. Das Docker-Hub-
+Repository muss öffentlich sein, damit der Dev-Stack es ohne Anmeldung beziehen
+kann. Die Veröffentlichung wird nur nach erfolgreichem Login in beide Registries
+versucht; bei einem späteren Registryfehler kann bereits eine der beiden
+Kopien veröffentlicht sein. Workflow-Ergebnis und Digests dann abgleichen.
 
 Tags:
 
@@ -158,13 +175,20 @@ sie noch privat ist. Neue GHCR-Pakete sind standardmässig privat, auch bei eine
 öffentlichen Repository. Dafür sind Verwaltungsrechte am Paket nötig; der
 Workflow verändert diese Einstellung nicht. Siehe
 [GitHub: Container Registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry).
-Der Workflow versucht einen Pull mit leerer Docker-Konfiguration und meldet im
-Ergebnis, wenn der anonyme Abruf noch nicht funktioniert.
+Der Workflow versucht für jede Registry einen Pull mit leerer Docker-Konfiguration
+und meldet im Ergebnis getrennt, wenn der anonyme Abruf noch nicht funktioniert.
 
 ```bash
 docker pull ghcr.io/sogis/datenportal-dokumentation:latest
 docker run --rm -p 127.0.0.1:8093:8080 \
   ghcr.io/sogis/datenportal-dokumentation:latest
+```
+
+Alternativ von Docker Hub:
+
+```bash
+docker pull sogis/datenportal-dokumentation:latest
+docker run --rm -p 127.0.0.1:8093:8080 sogis/datenportal-dokumentation:latest
 ```
 
 Für Updates ein neues Image ziehen und den Container neu erzeugen. Änderungen
