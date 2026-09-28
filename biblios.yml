@@ -35,7 +35,7 @@ content:
     - id: glossar
       display_name: Glossar
       #card_background_color: "#E8F1FF"
-      url: https://codeberg.org/edigonzales/datenportal-dokumentation-glossar.git
+      url: https://github.com/sogis/datenportal-dokumentation-glossar.git
       branches:
         - name: main
           display_version: Aktuell
@@ -59,7 +59,7 @@ content:
 
     - id: datenpublikation
       display_name: Datenpublikation
-      url: https://codeberg.org/edigonzales/datenportal-dokumentation-datenintegration.git
+      url: https://github.com/sogis/datenportal-dokumentation-datenintegration.git
       branches:
         - name: main
           display_version: Aktuell
@@ -71,7 +71,7 @@ content:
 
     - id: betrieb
       display_name: Betrieb
-      url: https://codeberg.org/edigonzales/datenportal-dokumentation-betrieb.git
+      url: https://github.com/sogis/datenportal-dokumentation-betrieb.git
       branches:
         - name: main
           display_version: Aktuell
