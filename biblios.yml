@@ -27,10 +27,10 @@ content:
   groups:
     - title: Datenlieferant
       sources: [datenpublikation, glossar]
-    - title: Themenintegrator
-      sources: [themenrepo]
     - title: Organisation
       sources: [governance]
+    - title: Themenintegrator
+      sources: [themenrepo]
     - title: Betreiber
       sources: [architektur, betrieb]
   sources:
