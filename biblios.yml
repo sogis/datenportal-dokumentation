@@ -25,8 +25,8 @@ ui:
 
 content:
   groups:
-    - title: Benutzer
-      sources: [datenintegration, glossar]
+    - title: Datenlieferant
+      sources: [datenpublikation, glossar]
     - title: Themenintegrator
       sources: [themenrepo]
     - title: Betreiber
@@ -34,7 +34,6 @@ content:
   sources:
     - id: glossar
       display_name: Glossar
-      card_label: Alle
       #card_background_color: "#E8F1FF"
       url: https://codeberg.org/edigonzales/datenportal-dokumentation-glossar.git
       branches:
@@ -48,7 +47,6 @@ content:
 
     - id: architektur
       display_name: Architektur und Zusammenspiel
-      card_label: Betrieb, Themenintegration, Entwicklung
       url: https://github.com/sogis/datenportal-dokumentation-architektur.git
       branches:
         - name: main
@@ -59,9 +57,8 @@ content:
       master_file: master.adoc
       sidebar_toc_numbers: on
 
-    - id: datenintegration
-      display_name: Datenintegration
-      card_label: Datenlieferant
+    - id: datenpublikation
+      display_name: Datenpublikation
       url: https://codeberg.org/edigonzales/datenportal-dokumentation-datenintegration.git
       branches:
         - name: main
@@ -74,7 +71,6 @@ content:
 
     - id: betrieb
       display_name: Betrieb
-      card_label: Administration
       url: https://codeberg.org/edigonzales/datenportal-dokumentation-betrieb.git
       branches:
         - name: main
@@ -87,7 +83,6 @@ content:
 
     - id: themenrepo
       display_name: Themenrepo
-      card_label: Themenintegrator
       url: https://codeberg.org/edigonzales/datenportal-themenrepo.git
       branches:
         - name: main
@@ -160,7 +155,6 @@ content:
 
     # - id: entwicklung-dev-stack
     #   display_name: "Entwicklung: Lokaler Datenportal-Stack"
-    #   card_label: Entwickler
     #   url: https://codeberg.org/edigonzales/datenportal-dev-stack.git
     #   branches:
     #     - name: main
@@ -173,7 +167,6 @@ content:
 
     # - id: entwicklung-jenkins-dev
     #   display_name: "Entwicklung: Jenkins-Dev-Umgebung"
-    #   card_label: Entwickler
     #   url: https://codeberg.org/edigonzales/datenportal-jenkins-dev.git
     #   branches:
     #     - name: main
@@ -186,7 +179,6 @@ content:
 
     # - id: entwicklung-jenkins-plugin
     #   display_name: "Entwicklung: Jenkins-Plugin"
-    #   card_label: Entwickler
     #   url: https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin.git
     #   branches:
     #     - name: main
