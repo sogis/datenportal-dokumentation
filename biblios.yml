@@ -24,6 +24,13 @@ ui:
   #source_url_pattern: "{repo_url}/src/branch/{branch}/{path}"
 
 content:
+  groups:
+    - title: Benutzer
+      sources: [datenintegration, glossar]
+    - title: Themenintegrator
+      sources: [themenrepo]
+    - title: Betreiber
+      sources: [architektur, betrieb]
   sources:
     - id: glossar
       display_name: Glossar
@@ -151,44 +158,44 @@ content:
     #     file: nav.yml
     #   start_page: index.adoc
 
-    - id: entwicklung-dev-stack
-      display_name: "Entwicklung: Lokaler Datenportal-Stack"
-      card_label: Entwickler
-      url: https://codeberg.org/edigonzales/datenportal-dev-stack.git
-      branches:
-        - name: main
-          display_version: Aktuell
-      start_path: docs/biblios
-      default_version: main
-      render_mode: single_page
-      master_file: index.adoc
-      sidebar_toc_numbers: on
+    # - id: entwicklung-dev-stack
+    #   display_name: "Entwicklung: Lokaler Datenportal-Stack"
+    #   card_label: Entwickler
+    #   url: https://codeberg.org/edigonzales/datenportal-dev-stack.git
+    #   branches:
+    #     - name: main
+    #       display_version: Aktuell
+    #   start_path: docs/biblios
+    #   default_version: main
+    #   render_mode: single_page
+    #   master_file: index.adoc
+    #   sidebar_toc_numbers: on
 
-    - id: entwicklung-jenkins-dev
-      display_name: "Entwicklung: Jenkins-Dev-Umgebung"
-      card_label: Entwickler
-      url: https://codeberg.org/edigonzales/datenportal-jenkins-dev.git
-      branches:
-        - name: main
-          display_version: Aktuell
-      start_path: docs/biblios/entwicklung
-      default_version: main
-      navigation:
-        file: nav.yml
-      start_page: index.adoc
+    # - id: entwicklung-jenkins-dev
+    #   display_name: "Entwicklung: Jenkins-Dev-Umgebung"
+    #   card_label: Entwickler
+    #   url: https://codeberg.org/edigonzales/datenportal-jenkins-dev.git
+    #   branches:
+    #     - name: main
+    #       display_version: Aktuell
+    #   start_path: docs/biblios/entwicklung
+    #   default_version: main
+    #   navigation:
+    #     file: nav.yml
+    #   start_page: index.adoc
 
-    - id: entwicklung-jenkins-plugin
-      display_name: "Entwicklung: Jenkins-Plugin"
-      card_label: Entwickler
-      url: https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin.git
-      branches:
-        - name: main
-          display_version: Aktuell
-      start_path: docs/biblios/entwicklung
-      default_version: main
-      navigation:
-        file: nav.yml
-      start_page: index.adoc
+    # - id: entwicklung-jenkins-plugin
+    #   display_name: "Entwicklung: Jenkins-Plugin"
+    #   card_label: Entwickler
+    #   url: https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin.git
+    #   branches:
+    #     - name: main
+    #       display_version: Aktuell
+    #   start_path: docs/biblios/entwicklung
+    #   default_version: main
+    #   navigation:
+    #     file: nav.yml
+    #   start_page: index.adoc
 
 pdf:
   enabled: false
