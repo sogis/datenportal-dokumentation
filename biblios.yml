@@ -29,6 +29,8 @@ content:
       sources: [datenpublikation, glossar]
     - title: Themenintegrator
       sources: [themenrepo]
+    - title: Organisation
+      sources: [governance]
     - title: Betreiber
       sources: [architektur, betrieb]
   sources:
@@ -91,6 +93,18 @@ content:
       default_version: main
       render_mode: single_page
       master_file: index.adoc
+      sidebar_toc_numbers: on
+
+    - id: governance
+      display_name: Governance
+      url: https://github.com/sogis/datenportal-dokumentation-governance.git
+      branches:
+        - name: main
+          display_version: Aktuell
+      start_path: docs/biblios
+      default_version: main
+      render_mode: single_page
+      master_file: master.adoc
       sidebar_toc_numbers: on
 
     # - id: einstieg
