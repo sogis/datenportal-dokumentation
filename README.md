@@ -66,11 +66,10 @@ Ein Remote-Build verwendet die bereitgestellten Git-Stände, keine lokalen
 Änderungen. Neue Architektur-Inhalte müssen zuerst im Architektur-Remote unter
 `main` vorhanden sein, bevor der vollständige Remote-Build erfolgreich sein kann.
 
-Bestehende Forgejo- und GitHub-Actions bauen und veröffentlichen die Website bei
+Eine bestehende GitHub-Action baut und veröffentlicht die Website bei
 Pushes auf `main` dieses Repositories oder bei manuellem Workflow-Start:
 
-- [Codeberg Pages](https://edigonzales.codeberg.page/datenportal-dokumentation/)
-- [GitHub Pages](https://edigonzales.github.io/datenportal-dokumentation/)
+- [GitHub Pages](https://sogis.github.io/datenportal-dokumentation/)
 
 Änderungen allein in Quellrepos lösen diese Workflows nicht aus. Die konfigurierte
 produktive Zieladresse ist `https://daten.so.ch/dokumentation`; dies bestätigt
